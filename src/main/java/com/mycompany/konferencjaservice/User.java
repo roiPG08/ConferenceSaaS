@@ -4,7 +4,13 @@
  */
 package com.mycompany.konferencjaservice;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -17,7 +23,9 @@ public class User {
     private boolean takingPart1; // taking part in 1st preelection
     private boolean takingPart2;
     private boolean takingPart3;
-    private ArrayList<Preelection> booked;
+    //private ArrayList<Preelection> booked;
+    private HashMap<String, Preelection> booked; // String represents
+    // time slots written in english: First, Second, Third 
 
     public User(int login, String mail) {
         this.login = login;
@@ -25,14 +33,11 @@ public class User {
         this.takingPart1 = false;
         this.takingPart2 = false;
         this.takingPart3 = false;
+        this.booked = new HashMap<>();
     }
 
-    // 1 slot = 10 - 11.45
-    // 2 slot = 12 - 13.45
-    // 3 slot = 14 - 15,.45
-    public void reservePreelection(Conference c) {
-        //Preelection selected = new Preelection(c);s
-        switch (c.getFirst().getPreelectionNumber()) {
+    public void reservePreelection(Conference c, int numberOfPreelection) throws ClassNotFoundException, SQLException {
+        switch (numberOfPreelection) {
             case (1):
                 if (takingPart1 == true && c.getFirst().getCurrentCapacity() < Preelection.getMAX_CAPACITY()) {
                     System.out.println("You cannot reserve it twice.");
@@ -40,7 +45,9 @@ public class User {
                 }
                 takingPart1 = true;
                 c.getFirst().increaseCurrentCapacity();
-                booked.add(c.getFirst());
+                System.out.println(c.getFirst().getCurrentCapacity() + " increased capacity.");
+                booked.put("First", c.getFirst());
+                System.out.println(getBooked() + " booked preelection by the user " + mail);
                 break;
             case (2):
                 if (takingPart2 == true && c.getSecond().getCurrentCapacity() < Preelection.getMAX_CAPACITY()) {
@@ -50,7 +57,7 @@ public class User {
                 }
                 takingPart2 = true;
                 c.getSecond().increaseCurrentCapacity();
-                booked.add(c.getSecond());
+                booked.put("Second", c.getSecond());
                 break;
             case (3):
                 if (takingPart3 == true && c.getThird().getCurrentCapacity() < Preelection.getMAX_CAPACITY()) {
@@ -59,18 +66,64 @@ public class User {
                 }
                 takingPart3 = true;
                 c.getThird().increaseCurrentCapacity();
-                booked.add(c.getThird());
+                booked.put("Third", c.getThird());
                 break;
             default:
                 System.out.println("Something went wrong");
+                break;
         }
-        /*
-        Should send this data to sql database.
-         */
+
+        String url = "jdbc:mysql://localhost:3306/conference";
+        String user = "root";
+        String password = "";
+        Class.forName("com.mysql.jdbc.Driver");
+        try ( Connection con = DriverManager.getConnection(url, user, password)) {
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("select * from Users");
+            while (rs.next()) {
+                System.out.println(rs.getInt(1) + " " + rs.getString(2) + "  sql 1st query.");
+            }
+        }
     }
 
-    public void cancelPreelection(Preelection p) {
-
+    public void cancelPreelection(Preelection p, int timeSlot) {
+        if (booked.containsValue(p) == false) {
+            System.out.println("User doesn't have following preelection reserved.");
+        } else {
+            switch (timeSlot) {
+                case 1:
+                    if (p == booked.get("First")) {
+                        booked.remove("First", p);
+                        System.out.println("Preeleciton " + p.getNameOfPreelection() + " has been removed at " + p.getPreelectionStart());
+                    } else {
+                        System.out.println("You don't have the following prelection reserved on this time slot!");
+                    }
+                    break;
+                case 2:
+                    if (p == booked.get("Second")) {
+                        booked.remove("Second");
+                        System.out.println("Preeleciton " + p.getNameOfPreelection() + " has been removed at " + p.getPreelectionStart());
+                    } else {
+                        System.out.println("You don't have the following prelection reserved on this time slot!");
+                    }
+                    break;
+                case 3:
+                    if (p == booked.get("Third")) {
+                        booked.remove("Third");
+                        System.out.println("Preeleciton " + p.getNameOfPreelection() + " has been removed at " + p.getPreelectionStart());
+                    } else {
+                        System.out.println("You don't have the following prelection reserved on this time slot!");
+                    }
+                    break;
+                default:
+                    System.out.println("The following timeSlot is invalid.");
+                    break;
+            }
+            
+            /*
+            SQL query for deleting booking record from database.
+            */
+        }
     }
 
     /**
@@ -139,14 +192,11 @@ public class User {
     /**
      * @return the booked
      */
-    public ArrayList<Preelection> getBooked() {
+    public HashMap<String, Preelection> getBooked() {
         return booked;
     }
 
-    /**
-     * @param booked the booked to set
-     */
-    public void setBooked(ArrayList<Preelection> booked) {
-        this.booked = booked;
+    public void setBooked(HashMap<String, Preelection> newBooked) {
+        this.booked = newBooked;
     }
 }

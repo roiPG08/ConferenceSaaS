@@ -27,13 +27,14 @@ public class User {
     private HashMap<String, Preelection> booked; // String represents
     // time slots written in english: First, Second, Third 
 
-    public User(int login, String mail) {
+    public User(int login, String mail) throws SQLException, ClassNotFoundException {
         this.login = login;
         this.mail = mail;
         this.takingPart1 = false;
         this.takingPart2 = false;
         this.takingPart3 = false;
         this.booked = new HashMap<>();
+        DbOperators.addUser(login, mail);
     }
 
     public void reservePreelection(Conference c, int numberOfPreelection) throws ClassNotFoundException, SQLException {
@@ -72,18 +73,8 @@ public class User {
                 System.out.println("Something went wrong");
                 break;
         }
-
-        String url = "jdbc:mysql://localhost:3306/conference";
-        String user = "root";
-        String password = "";
-        Class.forName("com.mysql.jdbc.Driver");
-        try ( Connection con = DriverManager.getConnection(url, user, password)) {
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("select * from Users");
-            while (rs.next()) {
-                System.out.println(rs.getInt(1) + " " + rs.getString(2) + "  sql 1st query.");
-            }
-        }
+        
+        DbOperators.insertReservation();
     }
 
     public void cancelPreelection(Preelection p, int timeSlot) {
@@ -199,4 +190,15 @@ public class User {
     public void setBooked(HashMap<String, Preelection> newBooked) {
         this.booked = newBooked;
     }
+
+    private boolean checkLogin(int login) throws SQLException, ClassNotFoundException {
+        ArrayList<Integer> currentLoginList = new ArrayList<>(DbOperators.getAllLogins());
+        
+        if(currentLoginList.contains(login)){
+            System.out.println("User with that name already exists.");
+            return true;
+        }
+        return false;
+    }
+
 }

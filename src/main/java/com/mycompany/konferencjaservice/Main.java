@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 /**
  *
@@ -45,14 +46,15 @@ public class Main {
         Preelection preelection3 = new Preelection("IT Security", 3, THIRD_PREELECTION_TIME);
 
         Conference konferencja = new Conference("Konferencja Sii", preelection1, preelection2, preelection3);
-
+        
+        
         User a = new User(1, "aaa@wp.pl");
         User b = new User(2, "bbb@gmail.com");
         User c = new User(3, "ccc@o2.pl");
-        User d = new User(4, "ddd@gmail.com");
-        User e = new User(5, "eee@gmail.com");
-        User f = new User(6, "fff@wp.pl");
-
+//        User d = new User(4, "ddd@gmail.com");
+//        User e = new User(5, "eee@gmail.com");
+//        User f = new User(6, "fff@wp.pl");
+    
         String url = "jdbc:mysql://localhost:3306/conference";
         String user = "root";
         String password = "";
@@ -69,5 +71,15 @@ public class Main {
         a.reservePreelection(konferencja, 1);
         
 
+    }
+    
+    private static boolean checkLogin(int login) throws SQLException, ClassNotFoundException {
+        ArrayList<Integer> currentLoginList = new ArrayList<>(DbOperators.getAllLogins());
+        
+        if(currentLoginList.contains(login)){
+            System.out.println("User with that name already exists.");
+            return true;
+        }
+        return false;
     }
 }

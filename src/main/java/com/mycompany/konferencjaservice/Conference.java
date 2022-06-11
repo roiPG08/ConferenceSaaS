@@ -4,8 +4,11 @@
  */
 package com.mycompany.konferencjaservice;
 
+import java.sql.SQLException;
 import java.time.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -32,6 +35,14 @@ public class Conference {
         this.firstPreelection = first;
         this.secondPreelection = second;
         this.thirdPreelection = third;
+        
+        // To be deleted after testing, as it deletes after each creating of Conference, 
+        //but it still might have some sense to leave it here
+        try {
+            DbOperators.dropAll();
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(Conference.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public static LocalDateTime getStartDate() {

@@ -10,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -20,61 +22,50 @@ public class User {
 
     private final int login;
     private String mail;
-    private ArrayList<Boolean> isTakingPart = new ArrayList<>();
+    private ArrayList<Boolean> isTakingPart;
     private boolean takingPart1; // taking part in 1st preelection
     private boolean takingPart2;
     private boolean takingPart3;
     //private ArrayList<Preelection> booked;
-    private HashMap<String, Preelection> booked; // String represents
+    private HashMap<Integer, Preelection> booked; // String represents
     // time slots written in english: First, Second, Third 
 
     public User(int login, String mail) throws SQLException, ClassNotFoundException {
         this.login = login;
         this.mail = mail;
+        this.isTakingPart = new ArrayList<>();
+        Collections.fill(isTakingPart, false);
         this.takingPart1 = false;
         this.takingPart2 = false;
         this.takingPart3 = false;
         this.booked = new HashMap<>();
         DbOperators.addUser(login, mail);
     }
+    
+    public User(int login, String mail, int numberOfPreelections) throws SQLException, ClassNotFoundException {
+        this.login = login;
+        this.mail = mail;
+        this.isTakingPart = new ArrayList<>(numberOfPreelections);
+        isTakingPart.addAll(Collections.nCopies(numberOfPreelections, Boolean.FALSE));        
+        //Collections.fill(isTakingPart, false);
+        this.booked = new HashMap<>();
+        DbOperators.addUser(login, mail);
+    }
 
     public void reservePreelection(Conference c, int numberOfPreelection) throws ClassNotFoundException, SQLException {
-        switch (numberOfPreelection) {
-            case (1):
-                if (takingPart1 == true && c.getPreelection(numberOfPreelection).getCurrentCapacity() < Preelection.getMAX_CAPACITY()) {
-                    System.out.println("You cannot reserve it twice.");
-                    break;
-                }
-                takingPart1 = true;
-                c.getPreelection(numberOfPreelection).increaseCurrentCapacity();
-                System.out.println(c.getPreelection(numberOfPreelection).getCurrentCapacity() + " increased capacity.");
-                booked.put("First", c.getPreelection(numberOfPreelection));
-                System.out.println(getBooked() + " booked preelection by the user " + mail);
-                break;
-            case (2):
-                if (takingPart2 == true && c.getPreelection(numberOfPreelection).getCurrentCapacity() < Preelection.getMAX_CAPACITY()) {
-                    System.out.println("You cannot reserve it twice.");
+        numberOfPreelection--;
 
-                    break;
-                }
-                takingPart2 = true;
-                c.getPreelection(numberOfPreelection).increaseCurrentCapacity();
-                booked.put("Second", c.getPreelection(numberOfPreelection));
-                break;
-            case (3):
-                if (takingPart3 == true && c.getPreelection(numberOfPreelection).getCurrentCapacity() < Preelection.getMAX_CAPACITY()) {
-                    System.out.println("You cannot reserve it twice.");
-                    break;
-                }
-                takingPart3 = true;
-                c.getPreelection(numberOfPreelection).increaseCurrentCapacity();
-                booked.put("Third", c.getPreelection(numberOfPreelection));
-                break;
-            default:
-                System.out.println("Something went wrong");
-                break;
+        if(c.getPreelection(numberOfPreelection).getCurrentCapacity() < Preelection.getMAX_CAPACITY() && 
+            isTakingPart.get(numberOfPreelection) == true){
+            System.out.println("You cannot reserve it twice.");
+            return;
         }
-        
+        isTakingPart.set(numberOfPreelection, true);
+        c.getPreelection(numberOfPreelection).increaseCurrentCapacity();
+        System.out.println(c.getPreelection(numberOfPreelection).getCurrentCapacity() + " increased capacity.");
+        booked.put(numberOfPreelection, c.getPreelection(numberOfPreelection));
+        System.out.println(getBooked() + " booked preelection by the user " + mail);
+
         DbOperators.insertReservation(getLogin(), c, numberOfPreelection);
     }
 
@@ -84,7 +75,7 @@ public class User {
         } else {
             switch (timeSlot) {
                 case 1:
-                    if (p == booked.get("First")) {
+                    if (p == booked.get(1)) {
                         booked.remove("First", p);
                         System.out.println("Preeleciton " + p.getNameOfPreelection() + " has been removed at " + p.getPreelectionStart());
                     } else {
@@ -92,16 +83,16 @@ public class User {
                     }
                     break;
                 case 2:
-                    if (p == booked.get("Second")) {
-                        booked.remove("Second");
+                    if (p == booked.get(2)) {
+                        booked.remove(2);
                         System.out.println("Preeleciton " + p.getNameOfPreelection() + " has been removed at " + p.getPreelectionStart());
                     } else {
                         System.out.println("You don't have the following prelection reserved on this time slot!");
                     }
                     break;
                 case 3:
-                    if (p == booked.get("Third")) {
-                        booked.remove("Third");
+                    if (p == booked.get(3)) {
+                        booked.remove(3);
                         System.out.println("Preeleciton " + p.getNameOfPreelection() + " has been removed at " + p.getPreelectionStart());
                     } else {
                         System.out.println("You don't have the following prelection reserved on this time slot!");
@@ -184,11 +175,11 @@ public class User {
     /**
      * @return the booked
      */
-    public HashMap<String, Preelection> getBooked() {
+    public HashMap<Integer, Preelection> getBooked() {
         return booked;
     }
 
-    public void setBooked(HashMap<String, Preelection> newBooked) {
+    public void setBooked(HashMap<Integer, Preelection> newBooked) {
         this.booked = newBooked;
     }
 

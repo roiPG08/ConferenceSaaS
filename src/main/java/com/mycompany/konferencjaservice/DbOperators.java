@@ -96,12 +96,14 @@ public class DbOperators {
     public static void dropAll() throws SQLException, ClassNotFoundException{
         Class.forName(DB_CLASS_NAME);
         try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            String query = "delete from users";
-            
+            String query1 = "delete from users";
+            String query2 = "delete from bookings";
             // Creating the mysql insert preparedstatement
-            PreparedStatement ps = con.prepareStatement(query);
-            ps.execute();
+            PreparedStatement ps1 = con.prepareStatement(query2);
+            ps1.execute();
             
+            PreparedStatement ps2 = con.prepareStatement(query1);
+            ps2.execute();
             con.close();
         }
     }

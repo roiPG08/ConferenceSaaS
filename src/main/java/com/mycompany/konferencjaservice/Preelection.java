@@ -16,9 +16,9 @@ public class Preelection {
 
     private final static int MAX_CAPACITY = 5;
     private int currentCapacity = 0;
-    private String nameOfPreelection;
-    private LocalDateTime preelectionStart;
-    private int preelectionNumber;
+    private final String nameOfPreelection;
+    private final LocalDateTime preelectionStart;
+    private final int preelectionNumber;
 
     public Preelection(String name, int number, LocalDateTime starts) {
         this.nameOfPreelection = name;

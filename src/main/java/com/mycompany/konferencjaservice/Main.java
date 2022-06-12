@@ -54,9 +54,9 @@ public class Main {
         Conference konferencja = new Conference("Konferencja Sii", listOfLectures);
         
         
-        User a = new User(1, "aaa@wp.pl");
-        User b = new User(2, "bbb@gmail.com");
-        User c = new User(3, "ccc@o2.pl");
+        User a = new User(1, "aaa@wp.pl",5);
+        User b = new User(2, "bbb@gmail.com",5);
+        User c = new User(3, "ccc@o2.pl",5);
 //        User d = new User(4, "ddd@gmail.com");
 //        User e = new User(5, "eee@gmail.com");
 //        User f = new User(6, "fff@wp.pl");

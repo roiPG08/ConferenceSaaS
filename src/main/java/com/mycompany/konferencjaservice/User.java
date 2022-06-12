@@ -23,31 +23,25 @@ public class User {
     private final int login;
     private String mail;
     private ArrayList<Boolean> isTakingPart;
-    private boolean takingPart1; // taking part in 1st preelection
-    private boolean takingPart2;
-    private boolean takingPart3;
     //private ArrayList<Preelection> booked;
     private HashMap<Integer, Preelection> booked; // String represents
-    // time slots written in english: First, Second, Third 
+    // time slots written numerically 
 
     public User(int login, String mail) throws SQLException, ClassNotFoundException {
         this.login = login;
         this.mail = mail;
         this.isTakingPart = new ArrayList<>();
         Collections.fill(isTakingPart, false);
-        this.takingPart1 = false;
-        this.takingPart2 = false;
-        this.takingPart3 = false;
         this.booked = new HashMap<>();
         DbOperators.addUser(login, mail);
     }
-    
+
     public User(int login, String mail, int numberOfPreelections) throws SQLException, ClassNotFoundException {
         this.login = login;
         this.mail = mail;
         this.isTakingPart = new ArrayList<>(numberOfPreelections);
-        isTakingPart.addAll(Collections.nCopies(numberOfPreelections, Boolean.FALSE));        
-        //Collections.fill(isTakingPart, false);
+        isTakingPart.addAll(Collections.nCopies(numberOfPreelections, Boolean.FALSE));
+        Collections.fill(isTakingPart, false);
         this.booked = new HashMap<>();
         DbOperators.addUser(login, mail);
     }
@@ -55,8 +49,8 @@ public class User {
     public void reservePreelection(Conference c, int numberOfPreelection) throws ClassNotFoundException, SQLException {
         numberOfPreelection--;
 
-        if(c.getPreelection(numberOfPreelection).getCurrentCapacity() < Preelection.getMAX_CAPACITY() && 
-            isTakingPart.get(numberOfPreelection) == true){
+        if (c.getPreelection(numberOfPreelection).getCurrentCapacity() < Preelection.getMAX_CAPACITY()
+                && isTakingPart.get(numberOfPreelection) == true) {
             System.out.println("You cannot reserve it twice.");
             return;
         }
@@ -66,46 +60,26 @@ public class User {
         booked.put(numberOfPreelection, c.getPreelection(numberOfPreelection));
         System.out.println(getBooked() + " booked preelection by the user " + mail);
 
-        DbOperators.insertReservation(getLogin(), c, numberOfPreelection);
+        DbOperators.insertReservation(getLogin(), c, ++numberOfPreelection);
     }
 
-    public void cancelPreelection(Preelection p, int timeSlot) {
+    // Have to add on which time slot the user wants to delete the preelection!!!
+    public void cancelPreelection(Preelection p) throws SQLException, ClassNotFoundException {
+        int preNum = p.getPreelectionNumber();
+
         if (booked.containsValue(p) == false) {
             System.out.println("User doesn't have following preelection reserved.");
-        } else {
-            switch (timeSlot) {
-                case 1:
-                    if (p == booked.get(1)) {
-                        booked.remove("First", p);
-                        System.out.println("Preeleciton " + p.getNameOfPreelection() + " has been removed at " + p.getPreelectionStart());
-                    } else {
-                        System.out.println("You don't have the following prelection reserved on this time slot!");
-                    }
-                    break;
-                case 2:
-                    if (p == booked.get(2)) {
-                        booked.remove(2);
-                        System.out.println("Preeleciton " + p.getNameOfPreelection() + " has been removed at " + p.getPreelectionStart());
-                    } else {
-                        System.out.println("You don't have the following prelection reserved on this time slot!");
-                    }
-                    break;
-                case 3:
-                    if (p == booked.get(3)) {
-                        booked.remove(3);
-                        System.out.println("Preeleciton " + p.getNameOfPreelection() + " has been removed at " + p.getPreelectionStart());
-                    } else {
-                        System.out.println("You don't have the following prelection reserved on this time slot!");
-                    }
-                    break;
-                default:
-                    System.out.println("The following timeSlot is invalid.");
-                    break;
-            }
-            
+            return;
+        }
+        if (p == booked.get(preNum)) {
+            booked.remove(preNum, p);
+            System.out.println("Preeleciton " + p.getNameOfPreelection() + " has been removed at " + p.getPreelectionStart());
             /*
             SQL query for deleting booking record from database.
-            */
+             */
+            DbOperators.cancelReservation(getLogin(), p);
+        } else {
+            System.out.println("You don't have the following prelection or the time slot which you selected is invalid!");
         }
     }
 
@@ -131,48 +105,6 @@ public class User {
     }
 
     /**
-     * @return the takingPart1
-     */
-    public boolean isTakingPart1() {
-        return takingPart1;
-    }
-
-    /**
-     * @param takingPart1 the takingPart1 to set
-     */
-    public void setTakingPart1(boolean takingPart1) {
-        this.takingPart1 = takingPart1;
-    }
-
-    /**
-     * @return the takingPart2
-     */
-    public boolean isTakingPart2() {
-        return takingPart2;
-    }
-
-    /**
-     * @param takingPart2 the takingPart2 to set
-     */
-    public void setTakingPart2(boolean takingPart2) {
-        this.takingPart2 = takingPart2;
-    }
-
-    /**
-     * @return the takingPart3
-     */
-    public boolean isTakingPart3() {
-        return takingPart3;
-    }
-
-    /**
-     * @param takingPart3 the takingPart3 to set
-     */
-    public void setTakingPart3(boolean takingPart3) {
-        this.takingPart3 = takingPart3;
-    }
-
-    /**
      * @return the booked
      */
     public HashMap<Integer, Preelection> getBooked() {
@@ -185,8 +117,8 @@ public class User {
 
     private boolean checkLogin(int login) throws SQLException, ClassNotFoundException {
         ArrayList<Integer> currentLoginList = new ArrayList<>(DbOperators.getAllLogins());
-        
-        if(currentLoginList.contains(login)){
+
+        if (currentLoginList.contains(login)) {
             System.out.println("User with that name already exists.");
             return true;
         }

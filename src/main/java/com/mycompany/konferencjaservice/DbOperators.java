@@ -7,8 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
-
+import java.sql.Timestamp;
 /**
  *
  * @author roiPG
@@ -38,20 +37,32 @@ public class DbOperators {
         Class.forName(DB_CLASS_NAME);
         try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD)) {
             String query = "insert into bookings (preelectionID, preelectionName, time_slot, login)" + " values (?, ?, ?, ?)";
+            Timestamp timestamp = Timestamp.valueOf(c.getPreelection(num).getPreelectionStart());
+            //System.out.println(timestamp + " date made with timestamp");
             
             // Creating the mysql insert preparedstatement
             PreparedStatement ps = con.prepareStatement(query);
             ps.setInt(1, num);
             ps.setString(2, c.getPreelection(num).getNameOfPreelection());
-
-            Date date = java.sql.Date.valueOf(c.getPreelection(num).getPreelectionStart().toLocalDate());
-            System.out.println(date + " date made with util lib");
-            System.out.println((java.sql.Date) date + " date made with sql lib");
-
-            ps.setDate(3, (java.sql.Date) date);
+            ps.setTimestamp(3, timestamp);
             ps.setInt(4, login); 
                         
             ps.execute();
+            
+            con.close();
+        }
+    }
+    
+    public static void cancelReservation(int login, Preelection p) throws SQLException, ClassNotFoundException {
+        Class.forName(DB_CLASS_NAME);
+        try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            String query = "delete from bookings where login = ? and preelectionID = ?";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setInt(1, login);
+            ps.setInt(2, p.getPreelectionNumber());
+            
+            int rowsAffected = ps.executeUpdate();
+            System.out.println("Rows affected: " + rowsAffected);
             
             con.close();
         }

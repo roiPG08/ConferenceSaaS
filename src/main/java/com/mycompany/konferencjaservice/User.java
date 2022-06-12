@@ -1,16 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.konferencjaservice;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -86,7 +77,7 @@ public class User {
     }
 
     /**
-     * @return the mail
+     * @return the login
      */
     public int getLogin() {
         return login;
@@ -107,16 +98,24 @@ public class User {
     }
 
     /**
-     * @return the booked
+     * @return the list of booked slots of preelections
      */
     public HashMap<Integer, Preelection> getBooked() {
         return booked;
     }
-
+    
+    /**
+     * Function used to set new or update booking list
+     * @param newBooked is new list of bookings.
+     */
     public void setBooked(HashMap<Integer, Preelection> newBooked) {
         this.booked = newBooked;
     }
-
+    
+    /**
+     * @return true if login already exists in a system, 
+     * which will avoid duplication of the same login numbers.
+     */
     private boolean checkLogin(int login) throws SQLException, ClassNotFoundException {
         ArrayList<Integer> currentLoginList = new ArrayList<>(DbOperators.getAllLogins());
 

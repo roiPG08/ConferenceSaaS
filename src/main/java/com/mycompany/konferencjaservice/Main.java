@@ -44,8 +44,14 @@ public class Main {
         Preelection preelection1 = new Preelection("AI", 1, START_DATE);
         Preelection preelection2 = new Preelection("Big Data", 2, SECOND_PREELECTION_TIME);
         Preelection preelection3 = new Preelection("IT Security", 3, THIRD_PREELECTION_TIME);
-
-        Conference konferencja = new Conference("Konferencja Sii", preelection1, preelection2, preelection3);
+        
+        ArrayList<Preelection> listOfLectures = new ArrayList<>();
+        
+        listOfLectures.add(preelection1);
+        listOfLectures.add(preelection2);
+        listOfLectures.add(preelection3);
+        
+        Conference konferencja = new Conference("Konferencja Sii", listOfLectures);
         
         
         User a = new User(1, "aaa@wp.pl");

@@ -20,6 +20,7 @@ public class User {
 
     private final int login;
     private String mail;
+    private ArrayList<Boolean> isTakingPart = new ArrayList<>();
     private boolean takingPart1; // taking part in 1st preelection
     private boolean takingPart2;
     private boolean takingPart3;
@@ -40,41 +41,41 @@ public class User {
     public void reservePreelection(Conference c, int numberOfPreelection) throws ClassNotFoundException, SQLException {
         switch (numberOfPreelection) {
             case (1):
-                if (takingPart1 == true && c.getFirst().getCurrentCapacity() < Preelection.getMAX_CAPACITY()) {
+                if (takingPart1 == true && c.getPreelection(numberOfPreelection).getCurrentCapacity() < Preelection.getMAX_CAPACITY()) {
                     System.out.println("You cannot reserve it twice.");
                     break;
                 }
                 takingPart1 = true;
-                c.getFirst().increaseCurrentCapacity();
-                System.out.println(c.getFirst().getCurrentCapacity() + " increased capacity.");
-                booked.put("First", c.getFirst());
+                c.getPreelection(numberOfPreelection).increaseCurrentCapacity();
+                System.out.println(c.getPreelection(numberOfPreelection).getCurrentCapacity() + " increased capacity.");
+                booked.put("First", c.getPreelection(numberOfPreelection));
                 System.out.println(getBooked() + " booked preelection by the user " + mail);
                 break;
             case (2):
-                if (takingPart2 == true && c.getSecond().getCurrentCapacity() < Preelection.getMAX_CAPACITY()) {
+                if (takingPart2 == true && c.getPreelection(numberOfPreelection).getCurrentCapacity() < Preelection.getMAX_CAPACITY()) {
                     System.out.println("You cannot reserve it twice.");
 
                     break;
                 }
                 takingPart2 = true;
-                c.getSecond().increaseCurrentCapacity();
-                booked.put("Second", c.getSecond());
+                c.getPreelection(numberOfPreelection).increaseCurrentCapacity();
+                booked.put("Second", c.getPreelection(numberOfPreelection));
                 break;
             case (3):
-                if (takingPart3 == true && c.getThird().getCurrentCapacity() < Preelection.getMAX_CAPACITY()) {
+                if (takingPart3 == true && c.getPreelection(numberOfPreelection).getCurrentCapacity() < Preelection.getMAX_CAPACITY()) {
                     System.out.println("You cannot reserve it twice.");
                     break;
                 }
                 takingPart3 = true;
-                c.getThird().increaseCurrentCapacity();
-                booked.put("Third", c.getThird());
+                c.getPreelection(numberOfPreelection).increaseCurrentCapacity();
+                booked.put("Third", c.getPreelection(numberOfPreelection));
                 break;
             default:
                 System.out.println("Something went wrong");
                 break;
         }
         
-        DbOperators.insertReservation();
+        DbOperators.insertReservation(getLogin(), c, numberOfPreelection);
     }
 
     public void cancelPreelection(Preelection p, int timeSlot) {

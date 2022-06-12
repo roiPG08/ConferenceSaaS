@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class Conference {
 
     
-
+    private ArrayList<Preelection> preelections;
     private static final int LECTURE_TIME = 105;
     private static final int BREAK_TIME = 15;
     private static final LocalDateTime START_DATE = LocalDateTime.of(2022, 6, 1, 10, 00);
@@ -26,15 +26,10 @@ public class Conference {
     private static final LocalDateTime THIRD_PREELECTION_TIME = START_DATE.plusMinutes(2 * (LECTURE_TIME + BREAK_TIME));
     private final String EVENT_NAME;
     private static Duration duration = Duration.between(START_DATE, END_DATE);
-    private Preelection firstPreelection;
-    private Preelection secondPreelection;
-    private Preelection thirdPreelection;
 
-    public Conference(String name, Preelection first, Preelection second, Preelection third) {
+    public Conference(String name, ArrayList<Preelection> preelections) {
         this.EVENT_NAME = name;
-        this.firstPreelection = first;
-        this.secondPreelection = second;
-        this.thirdPreelection = third;
+        this.preelections = new ArrayList<>(preelections);
         
         // To be deleted after testing, as it deletes after each creating of Conference, 
         //but it still might have some sense to leave it here
@@ -65,16 +60,12 @@ public class Conference {
         return EVENT_NAME;
     }
 
-    public Preelection getFirst() {
-        return firstPreelection;
+    public Preelection getPreelection(int n) {
+        return preelections.get(n);
     }
-
-    public Preelection getSecond() {
-        return secondPreelection;
-    }
-
-    public Preelection getThird() {
-        return thirdPreelection;
+    
+    public ArrayList<Preelection> getPreelectionList() {
+        return preelections;
     }
 
     public static Duration getDuration() {

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.konferencjaservice;
 
 import java.sql.Connection;
@@ -11,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -37,7 +34,7 @@ public class DbOperators {
         }
     }
     
-    public static void insertReservation(User a, Conference c, int num) throws SQLException, ClassNotFoundException {
+    public static void insertReservation(int login, Conference c, int num) throws SQLException, ClassNotFoundException {
         Class.forName(DB_CLASS_NAME);
         try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD)) {
             String query = "insert into bookings (preelectionID, preelectionName, time_slot, login)" + " values (?, ?, ?, ?)";
@@ -45,25 +42,15 @@ public class DbOperators {
             // Creating the mysql insert preparedstatement
             PreparedStatement ps = con.prepareStatement(query);
             ps.setInt(1, num);
-            switch (num) {
-                case 1:
-                    ps.setString(2, c.getFirst().getNameOfPreelection());
-                    break;
-                case 2:
-                    ps.setString(2, c.getSecond().getNameOfPreelection());
-                    break;
-                case 3:
-                    ps.setString(2, c.getThird().getNameOfPreelection());
-                    break;
-                default:
-                    System.out.println("There is no such a preelection slot");
-                    break;
-            }
-            
-            ps.setDate(3, c.getFirst().getPreelectionStart());
-            ps.setInt(4, a.getLogin());
-            
-            
+            ps.setString(2, c.getPreelection(num).getNameOfPreelection());
+
+            Date date = java.sql.Date.valueOf(c.getPreelection(num).getPreelectionStart().toLocalDate());
+            System.out.println(date + " date made with util lib");
+            System.out.println((java.sql.Date) date + " date made with sql lib");
+
+            ps.setDate(3, (java.sql.Date) date);
+            ps.setInt(4, login); 
+                        
             ps.execute();
             
             con.close();
@@ -104,6 +91,7 @@ public class DbOperators {
         }
         return list;
     }
+    
     
     public static void dropAll() throws SQLException, ClassNotFoundException{
         Class.forName(DB_CLASS_NAME);

@@ -75,8 +75,7 @@ public class Main {
         }
 
         a.reservePreelection(konferencja, 1);
-        
-        a.cancelPreelection(preelection3);
+
         a.cancelPreelection(preelection1);
     }
     

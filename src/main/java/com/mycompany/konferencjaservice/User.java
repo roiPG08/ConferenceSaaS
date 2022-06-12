@@ -63,10 +63,12 @@ public class User {
         DbOperators.insertReservation(getLogin(), c, ++numberOfPreelection);
     }
 
-    // Have to add on which time slot the user wants to delete the preelection!!!
     public void cancelPreelection(Preelection p) throws SQLException, ClassNotFoundException {
-        int preNum = p.getPreelectionNumber();
-
+        int preNum = p.getPreelectionNumber() - 1;
+        for(int i = 0; i < booked.size(); i++){
+            System.out.println(i + ", " + booked.get(i));
+        }
+        System.out.println("Preelection number " + preNum);
         if (booked.containsValue(p) == false) {
             System.out.println("User doesn't have following preelection reserved.");
             return;

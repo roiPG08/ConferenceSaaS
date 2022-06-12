@@ -25,7 +25,7 @@ public class MyResource {
     private Preelection preelection1 = new Preelection("AI", 1, START_DATE);
     private Preelection preelection2 = new Preelection("Big Data", 2, SECOND_PREELECTION_TIME);
     private Preelection preelection3 = new Preelection("IT Security", 3, THIRD_PREELECTION_TIME);
-    private Conference konferencja = new Conference("Konferencja Sii", preelection1, preelection2, preelection3);
+    //private Conference konferencja = new Conference("Konferencja Sii", preelection1, preelection2, preelection3);
     
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -45,11 +45,11 @@ public class MyResource {
             text = "User cannot be created. Inputed login already in use."
         }
         */
-        User newUser = new User(login, email);
+        //User newUser = new User(login, email);
     }
     public void makeReservation(int login, String email, int preelectionNumber){
-        User toReserve = new User(login, email);
+        //User toReserve = new User(login, email);
         
-        toReserve.reservePreelection(konferencja, preelectionNumber);
+        //toReserve.reservePreelection(konferencja, preelectionNumber);
     }
 }

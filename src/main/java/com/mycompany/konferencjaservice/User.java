@@ -93,8 +93,12 @@ public class User {
     /**
      * @param mail the mail to set
      */
-    public void setMail(String mail) {
+    public void setMail(String mail) throws SQLException, ClassNotFoundException {
         this.mail = mail;
+        /*
+        * SQL Query for updating user's email in database.
+        */
+        DbOperators.updateMail(login, mail);
     }
 
     /**

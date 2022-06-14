@@ -117,5 +117,21 @@ public class DbOperators {
             ps2.execute();
             con.close();
         }
+    }   
+    
+    public static void updateMail(int login, String mail) throws SQLException, ClassNotFoundException {
+        Class.forName(DB_CLASS_NAME);
+        try (Connection con = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            String query1 = "update users set email = ? where login = ?";
+            
+            // Creating the mysql insert preparedstatement
+            PreparedStatement ps1 = con.prepareStatement(query1);
+            ps1.setString(1, mail);
+            ps1.setInt(2, login);
+            
+            ps1.execute();
+            
+            con.close();
+        }
     }
 }

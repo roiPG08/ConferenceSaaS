@@ -72,6 +72,8 @@ public class Main {
         a.reservePreelection(konferencja, 1);
 
         a.cancelPreelection(preelection1);
+        
+        a.setMail("abrakadabra@wp.pl");
     }
     
     private static boolean checkLogin(int login) throws SQLException, ClassNotFoundException {

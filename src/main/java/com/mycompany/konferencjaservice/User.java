@@ -18,6 +18,18 @@ public class User {
     private HashMap<Integer, Preelection> booked; // String represents
     // time slots written numerically 
 
+    public User(int login, String mail, Boolean operational) throws SQLException, ClassNotFoundException {
+        this.login = login;
+        this.mail = mail;
+        this.isTakingPart = new ArrayList<>();
+        Collections.fill(isTakingPart, false);
+        this.booked = new HashMap<>();
+        if(operational == true){
+            DbOperators.addUser(login, mail);
+        }
+       
+    }
+    
     public User(int login, String mail) throws SQLException, ClassNotFoundException {
         this.login = login;
         this.mail = mail;

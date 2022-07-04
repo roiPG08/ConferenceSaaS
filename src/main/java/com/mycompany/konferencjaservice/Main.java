@@ -55,19 +55,6 @@ public class Main {
 //        User d = new User(4, "ddd@gmail.com");
 //        User e = new User(5, "eee@gmail.com");
 //        User f = new User(6, "fff@wp.pl");
-    
-        String url = "jdbc:mysql://localhost:3306/conference";
-        String user = "root";
-        String password = "";
-        Class.forName("com.mysql.jdbc.Driver");
-        try ( Connection con = DriverManager.getConnection(url, user, password)) {
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("select * from Users");
-
-            while (rs.next()) {
-                System.out.println(rs.getInt(1) + " " + rs.getString(2) + " sqllllll woooorks");
-            }
-        }
 
         a.reservePreelection(konferencja, 1);
 
@@ -75,6 +62,8 @@ public class Main {
         
         a.setMail("abrakadabra@wp.pl");
         DbOperators.getAllUsersDetails();
+        
+        System.out.println(konferencja.getConferencePlan());
     }
     
     private static boolean checkLogin(int login) throws SQLException, ClassNotFoundException {

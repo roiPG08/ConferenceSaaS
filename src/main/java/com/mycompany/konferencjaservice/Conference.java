@@ -69,7 +69,13 @@ public class Conference {
     }
 
     public String getConferencePlan() {
-        String plan = "";
-        return plan;
+        StringBuilder plan = new StringBuilder("***Conference Plan - " + getName() + "*** \n"
+                    + " This conference is build up of following preelections: \n");
+        for(int i = 0; i < preelections.size(); i++){
+            int index = 1;
+            plan.append(String.format("%d. %s at %s. \n", index, preelections.get(i).getNameOfPreelection(), preelections.get(i).getPreelectionStart()));
+            index++;
+        }
+        return plan.toString();
     }
 }

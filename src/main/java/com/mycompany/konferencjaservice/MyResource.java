@@ -1,12 +1,19 @@
 package com.mycompany.konferencjaservice;
 
 import jakarta.inject.Singleton;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 /**
  * Root resource (exposed at "myresource" path)
@@ -25,7 +32,7 @@ public class MyResource {
     private Preelection preelection1 = new Preelection("AI", 1, START_DATE);
     private Preelection preelection2 = new Preelection("Big Data", 2, SECOND_PREELECTION_TIME);
     private Preelection preelection3 = new Preelection("IT Security", 3, THIRD_PREELECTION_TIME);
-    //private Conference konferencja = new Conference("Konferencja Sii", preelection1, preelection2, preelection3);
+    //private Conference konferencja = new Conference("Konferencja Sii", electionList);
     
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -37,19 +44,87 @@ public class MyResource {
     public void setString(String s) {
         text = s;
     }
-    public void createUser(int login, String email){
-        /*
-        Try to find the same login in database
-        
-        if(login exists) {
-            text = "User cannot be created. Inputed login already in use."
-        }
-        */
-        //User newUser = new User(login, email);
-    }
+    
     public void makeReservation(int login, String email, int preelectionNumber){
         //User toReserve = new User(login, email);
         
         //toReserve.reservePreelection(konferencja, preelectionNumber);
+    }
+    
+    /*
+    http://localhost:8080/webapi/myresource/body
+    Lemon is a fruit
+    */
+    @POST
+    @Path("body")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String body(String param) {
+        return param;
+    }
+    
+    /*
+    http://localhost:8080/webapi/myresource/path/French/Adventure/The%20Count%20of%20Monte%20Cristo
+    */
+    @GET
+    @Path("path/{language}/{genre}/{title}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String path(@PathParam("language") String language,
+            @PathParam("genre") String genre,
+            @PathParam("title") String title){
+        return language + " - " + genre + " - " + title;
+    }
+    
+    /*
+    http://localhost:8080/webapi/myresource/path/French/Adventure
+    */
+    @GET
+    @Path("path/{language}/{genre}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String path2(@PathParam("language") String language,
+            @PathParam("genre") String genre){
+        return language + " - " + genre + " - Any";
+    }
+    
+    /*
+    http://localhost:8080/webapi/myresource/query?language=French&genre=Adventure&title=The%20Count%20of%20Monte%20Cristo
+    params can be omitted
+    */
+    @GET
+    @Path("query")
+    @Produces(MediaType.TEXT_HTML)
+    public String query(@QueryParam("language") @DefaultValue("Any") String language,
+            @QueryParam("genre") @DefaultValue("Any")String genre,
+            @QueryParam("title") @DefaultValue("Any") String title){
+        return language + " - " + genre + " - " + title;
+    }
+    
+    /*
+    http://localhost:8080/webapi/myresource/form
+    Content-Type application/x-www-form-urlencoded
+    language=French&genre=Adventure&title=The%20Count%20of%20Monte%20Cristo
+    params can be omitted
+    */
+    @POST
+    @Path("form")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String form(@FormParam("language") @DefaultValue("Any") String language,
+            @FormParam("genre") @DefaultValue("Any")String genre,
+            @FormParam("title") @DefaultValue("Any") String title) {
+        return language + " - " + genre + " - " + title;
+    }
+    
+    /*
+    http://localhost:8080/webapi/myresource/header
+    Fruit-Name lemon
+    Fruit-Colour yellow
+    */
+    @GET
+    @Path("header")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String header(@HeaderParam("Fruit-Name") String name,
+            @HeaderParam("Fruit-Colour") String colour) {
+        return name + " - " + colour;
     }
 }

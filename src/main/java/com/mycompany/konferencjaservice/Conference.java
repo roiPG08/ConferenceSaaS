@@ -25,7 +25,10 @@ public class Conference {
 
     public Conference(String name, ArrayList<Preelection> preelections) {
         this.EVENT_NAME = name;
-        this.preelections = new ArrayList<>(preelections);
+        if(preelections.size() != 0){
+            this.preelections = new ArrayList<>(preelections);
+        }
+        
         
         // To be deleted after testing, as it deletes after each creating of Conference, 
         //but it still might have some sense to leave it here

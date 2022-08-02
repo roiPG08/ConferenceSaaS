@@ -18,7 +18,7 @@ import java.util.ArrayList;
 /**
  * Root resource (exposed at "myresource" path)
  */
-@Singleton
+
 @Path("myresource")
 public class MyResource {
     
@@ -32,7 +32,9 @@ public class MyResource {
     private Preelection preelection1 = new Preelection("AI", 1, START_DATE);
     private Preelection preelection2 = new Preelection("Big Data", 2, SECOND_PREELECTION_TIME);
     private Preelection preelection3 = new Preelection("IT Security", 3, THIRD_PREELECTION_TIME);
-    //private Conference konferencja = new Conference("Konferencja Sii", electionList);
+    private ArrayList<Preelection> electionList = new ArrayList<>();
+    private final Conference konferencja = new Conference("Konferencja Sii", electionList);
+    
     
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -45,12 +47,13 @@ public class MyResource {
         text = s;
     }
     
-    public void makeReservation(int login, String email, int preelectionNumber){
-        //User toReserve = new User(login, email);
-        
-        //toReserve.reservePreelection(konferencja, preelectionNumber);
-    }
-    
+//    @GET
+//    @Path("/{conference}/plan")
+//    @Produces(MediaType.TEXT_PLAIN)
+//    public String getConferencePlan(@PathParam("conference") Conference conference) {
+//        return konferencja.getConferencePlan();
+//    }
+   
     /*
     http://localhost:8080/webapi/myresource/body
     Lemon is a fruit
